@@ -1,7 +1,8 @@
 """Order domain logic ported from Day06 Hackathon (JS services)."""
+
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 STATUS = {
     "ORDERED": "đã đặt hàng",
@@ -110,10 +111,13 @@ def can_edit_order(order: dict) -> bool:
 
 
 def get_merchant_contact(order: dict) -> dict:
-    base = MERCHANT_CONTACTS.get(order.get("merchant_name", ""), {
-        "phone": "1900 6363",
-        "address": "Chi nhánh gần bạn — xem trong app basau",
-    })
+    base = MERCHANT_CONTACTS.get(
+        order.get("merchant_name", ""),
+        {
+            "phone": "1900 6363",
+            "address": "Chi nhánh gần bạn — xem trong app basau",
+        },
+    )
     return {
         "name": (order.get("merchant_name") or "").strip(),
         "phone": order.get("merchant_phone") or base["phone"],
@@ -182,7 +186,9 @@ def build_customer_message(order: dict) -> str:
     if view == "in_progress":
         if status == STATUS["ORDERED"]:
             if order.get("is_cancelable"):
-                return "Đơn đã ghi nhận — đang chờ quán xác nhận. Bạn có thể chỉnh sửa đơn hoặc hủy theo chính sách basau."
+                return (
+                    "Đơn đã ghi nhận — đang chờ quán xác nhận. Bạn có thể chỉnh sửa đơn hoặc hủy theo chính sách basau."
+                )
             return "Đơn đã ghi nhận — đang chờ quán xác nhận. Bạn có thể chỉnh sửa ghi chú cho quán."
         if status == STATUS["CONFIRMED"]:
             return "Quán đã xác nhận đơn — món sẽ được chuẩn bị trong thời gian sớm nhất."
@@ -252,8 +258,8 @@ def minutes_since(iso: str | None) -> int:
     try:
         created = datetime.fromisoformat(iso.replace("Z", "+00:00"))
         if created.tzinfo is None:
-            created = created.replace(tzinfo=timezone.utc)
-        delta = datetime.now(timezone.utc) - created.astimezone(timezone.utc)
+            created = created.replace(tzinfo=UTC)
+        delta = datetime.now(UTC) - created.astimezone(UTC)
         return max(0, round(delta.total_seconds() / 60))
     except ValueError:
         return 0

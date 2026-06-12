@@ -1,5 +1,6 @@
 """Domain logic and tool handler tests."""
-from app.basau.domain import get_cancel_journey_phase, normalize_status, STATUS
+
+from app.basau.domain import STATUS, get_cancel_journey_phase, normalize_status
 from app.basau.prompt_loader import load_system_prompt
 from app.basau.tools import lookup_order
 

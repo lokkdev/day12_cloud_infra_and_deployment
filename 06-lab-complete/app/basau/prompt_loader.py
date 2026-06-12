@@ -1,4 +1,5 @@
 """Load system prompt from Day06 SYSTEM_PROMPT.md."""
+
 from __future__ import annotations
 
 import os

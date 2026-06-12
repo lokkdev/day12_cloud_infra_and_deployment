@@ -1,4 +1,5 @@
 """Pytest fixtures — set env before app imports."""
+
 import os
 
 os.environ.setdefault("ENVIRONMENT", "development")
@@ -8,14 +9,14 @@ os.environ.setdefault("JWT_SECRET", "test-jwt-secret")
 os.environ.setdefault("GEMINI_API_KEY", "")
 
 import pytest
-from fastapi.testclient import TestClient
-
 from app.main import app
+from fastapi.testclient import TestClient
 
 
 @pytest.fixture
 def client():
-    return TestClient(app)
+    with TestClient(app) as test_client:
+        yield test_client
 
 
 @pytest.fixture

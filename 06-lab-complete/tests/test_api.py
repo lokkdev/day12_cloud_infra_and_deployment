@@ -1,4 +1,5 @@
 """API endpoint tests."""
+
 from unittest.mock import patch
 
 from app.basau.agent import AgentReply

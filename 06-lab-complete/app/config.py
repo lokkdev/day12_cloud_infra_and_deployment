@@ -1,6 +1,7 @@
 """Production config — 12-Factor: tất cả từ environment variables."""
-import os
+
 import logging
+import os
 from dataclasses import dataclass, field
 
 
@@ -21,30 +22,20 @@ class Settings:
     llm_model: str = field(default_factory=lambda: os.getenv("LLM_MODEL", "gpt-4o-mini"))
     gemini_api_key: str = field(default_factory=lambda: os.getenv("GEMINI_API_KEY", ""))
     gemini_model: str = field(default_factory=lambda: os.getenv("GEMINI_MODEL", "gemini-2.0-flash"))
-    gemini_temperature: float = field(
-        default_factory=lambda: float(os.getenv("GEMINI_TEMPERATURE", "0.3"))
-    )
-    gemini_max_output_tokens: int = field(
-        default_factory=lambda: int(os.getenv("GEMINI_MAX_OUTPUT_TOKENS", "512"))
-    )
+    gemini_temperature: float = field(default_factory=lambda: float(os.getenv("GEMINI_TEMPERATURE", "0.3")))
+    gemini_max_output_tokens: int = field(default_factory=lambda: int(os.getenv("GEMINI_MAX_OUTPUT_TOKENS", "512")))
     data_json_path: str = field(default_factory=lambda: os.getenv("DATA_JSON_PATH", ""))
 
     # Security
     agent_api_key: str = field(default_factory=lambda: os.getenv("AGENT_API_KEY", "dev-key-change-me"))
     jwt_secret: str = field(default_factory=lambda: os.getenv("JWT_SECRET", "dev-jwt-secret"))
-    allowed_origins: list = field(
-        default_factory=lambda: os.getenv("ALLOWED_ORIGINS", "*").split(",")
-    )
+    allowed_origins: list = field(default_factory=lambda: os.getenv("ALLOWED_ORIGINS", "*").split(","))
 
     # Rate limiting
-    rate_limit_per_minute: int = field(
-        default_factory=lambda: int(os.getenv("RATE_LIMIT_PER_MINUTE", "20"))
-    )
+    rate_limit_per_minute: int = field(default_factory=lambda: int(os.getenv("RATE_LIMIT_PER_MINUTE", "20")))
 
     # Budget
-    daily_budget_usd: float = field(
-        default_factory=lambda: float(os.getenv("DAILY_BUDGET_USD", "5.0"))
-    )
+    daily_budget_usd: float = field(default_factory=lambda: float(os.getenv("DAILY_BUDGET_USD", "5.0")))
 
     # Storage
     redis_url: str = field(default_factory=lambda: os.getenv("REDIS_URL", ""))

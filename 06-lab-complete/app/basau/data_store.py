@@ -1,4 +1,5 @@
 """In-memory data store with runtime patches (ported from Day06 dataStore.js)."""
+
 from __future__ import annotations
 
 import json

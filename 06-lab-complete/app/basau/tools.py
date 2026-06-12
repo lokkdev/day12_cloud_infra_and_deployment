@@ -1,9 +1,10 @@
 """Tool declarations and handlers — ported from Day06 Hackathon."""
+
 from __future__ import annotations
 
 import random
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from app.basau import domain
 from app.basau.data_store import get_data, patch_order
@@ -115,9 +116,7 @@ def analyze_order_risk(args: dict) -> dict:
         "recommended_actions": domain.recommended_actions(order),
         "customer_message": domain.build_customer_message(order),
         "wait_time_minutes": domain.minutes_since(order.get("created_at")),
-        "food_wait_minutes": domain.minutes_since(order.get("food_ready_at"))
-        if order.get("food_ready_at")
-        else None,
+        "food_wait_minutes": domain.minutes_since(order.get("food_ready_at")) if order.get("food_ready_at") else None,
         "view_type": domain.get_customer_view_type(order),
     }
 
@@ -175,8 +174,7 @@ def cancel_order(args: dict, session: SessionState) -> dict:
             "refund_eligible": False,
             "rejection_reason": "ORDER_IN_DELIVERY",
             "message": (
-                f"Rất tiếc, đơn {order_id} không thể hủy vì đang được giao. "
-                "Bạn liên hệ nhân viên nếu có sự cố."
+                f"Rất tiếc, đơn {order_id} không thể hủy vì đang được giao. " "Bạn liên hệ nhân viên nếu có sự cố."
             ),
         }
     if phase == "preparing":
@@ -186,9 +184,7 @@ def cancel_order(args: dict, session: SessionState) -> dict:
             "cancel_status": "rejected",
             "refund_eligible": False,
             "rejection_reason": "ORDER_PREPARING",
-            "message": (
-                f"Rất tiếc, đơn {order_id} không thể hủy lúc này vì quán đang chuẩn bị món."
-            ),
+            "message": (f"Rất tiếc, đơn {order_id} không thể hủy lúc này vì quán đang chuẩn bị món."),
         }
     if phase == "confirmed":
         return {
@@ -198,8 +194,7 @@ def cancel_order(args: dict, session: SessionState) -> dict:
             "refund_eligible": False,
             "requires_admin": True,
             "message": (
-                f"Đơn {order_id} đã được quán xác nhận. Yêu cầu hủy đã gửi — "
-                "admin basau sẽ duyệt trong ít phút."
+                f"Đơn {order_id} đã được quán xác nhận. Yêu cầu hủy đã gửi — " "admin basau sẽ duyệt trong ít phút."
             ),
         }
     if phase == "ordered":
@@ -247,9 +242,7 @@ def request_refund(args: dict) -> dict:
             "requires_escalation": True,
         }
 
-    needs_evidence = args.get("refund_reason") in {
-        "WRONG_FOOD", "MISSING_ITEMS", "FOOD_DAMAGED"
-    }
+    needs_evidence = args.get("refund_reason") in {"WRONG_FOOD", "MISSING_ITEMS", "FOOD_DAMAGED"}
     if needs_evidence and not args.get("evidence_provided"):
         return {
             "success": False,
@@ -260,9 +253,7 @@ def request_refund(args: dict) -> dict:
             "message": "Vui lòng gửi ảnh bằng chứng để xử lý hoàn tiền.",
         }
 
-    auto_approve = args.get("refund_reason") in {
-        "SYSTEM_CANCEL", "NO_DRIVER", "MERCHANT_CLOSED", "LATE_DELIVERY"
-    }
+    auto_approve = args.get("refund_reason") in {"SYSTEM_CANCEL", "NO_DRIVER", "MERCHANT_CLOSED", "LATE_DELIVERY"}
     return {
         "success": True,
         "order_id": args.get("order_id"),
@@ -281,7 +272,7 @@ def request_refund(args: dict) -> dict:
 
 def escalate_to_human(args: dict, session: SessionState) -> dict:
     session.escalated = True
-    today = datetime.now(timezone.utc).strftime("%Y%m%d")
+    today = datetime.now(UTC).strftime("%Y%m%d")
     ticket_id = f"TKT-{today}-{random.randint(100, 999)}"
     priority = args.get("priority", "normal")
     return {
@@ -289,9 +280,7 @@ def escalate_to_human(args: dict, session: SessionState) -> dict:
         "ticket_id": ticket_id,
         "assigned_agent": None,
         "estimated_wait": "Trong vòng 2 phút" if priority == "urgent" else "Trong vòng 5 phút",
-        "message": (
-            "Mình đang chuyển bạn sang nhân viên hỗ trợ. Vui lòng không đóng cửa sổ chat."
-        ),
+        "message": ("Mình đang chuyển bạn sang nhân viên hỗ trợ. Vui lòng không đóng cửa sổ chat."),
     }
 
 
@@ -327,12 +316,12 @@ def check_merchant_status(args: dict) -> dict:
 
 def log_audit_event(args: dict) -> dict:
     entry = {
-        "log_id": f"LOG-{int(datetime.now(timezone.utc).timestamp() * 1000)}",
+        "log_id": f"LOG-{int(datetime.now(UTC).timestamp() * 1000)}",
         "order_id": args.get("order_id"),
         "event_type": args.get("event_type"),
         "details": args.get("details"),
         "actor": args.get("actor"),
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
     }
     _audit_entries.append(entry)
     return {
@@ -398,8 +387,7 @@ def get_tool_declarations():
         types.FunctionDeclaration(
             name="cancelOrder",
             description=(
-                "Hủy đơn theo GIAI ĐOẠN TIMELINE. CHỈ khi cancel_auto_allowed=true "
-                "VÀ customer_confirmed=true."
+                "Hủy đơn theo GIAI ĐOẠN TIMELINE. CHỈ khi cancel_auto_allowed=true " "VÀ customer_confirmed=true."
             ),
             parameters=_schema_object(
                 {
@@ -463,9 +451,7 @@ def get_tool_declarations():
                         ],
                     ),
                     "context_summary": types.Schema(type=types.Type.STRING),
-                    "priority": types.Schema(
-                        type=types.Type.STRING, enum=["normal", "high", "urgent"]
-                    ),
+                    "priority": types.Schema(type=types.Type.STRING, enum=["normal", "high", "urgent"]),
                 },
                 ["order_id", "escalation_reason", "context_summary", "priority"],
             ),
@@ -510,9 +496,7 @@ def get_tool_declarations():
                         ],
                     ),
                     "details": types.Schema(type=types.Type.STRING),
-                    "actor": types.Schema(
-                        type=types.Type.STRING, enum=["bot", "customer", "admin", "system"]
-                    ),
+                    "actor": types.Schema(type=types.Type.STRING, enum=["bot", "customer", "admin", "system"]),
                 },
                 ["order_id", "event_type", "details", "actor"],
             ),

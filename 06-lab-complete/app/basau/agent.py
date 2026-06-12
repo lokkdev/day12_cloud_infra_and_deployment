@@ -1,4 +1,5 @@
 """BaSau Gemini agent with tool-calling — ported from Day06 geminiService.js."""
+
 from __future__ import annotations
 
 import logging
