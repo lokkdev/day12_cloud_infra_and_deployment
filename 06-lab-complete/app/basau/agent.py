@@ -4,7 +4,7 @@ from __future__ import annotations
 import logging
 import re
 import uuid
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from app.basau import domain
 from app.basau.prompt_loader import load_system_prompt
