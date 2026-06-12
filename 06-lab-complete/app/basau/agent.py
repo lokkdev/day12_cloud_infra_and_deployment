@@ -32,6 +32,11 @@ def is_ai_enabled() -> bool:
     return bool(settings.gemini_api_key)
 
 
+def reset_session(session_id: str) -> None:
+    """Clear an in-memory chat session (used by Day06 UI reset)."""
+    _sessions.pop(session_id, None)
+
+
 def _get_system_prompt() -> str:
     global _system_prompt
     if _system_prompt is None:

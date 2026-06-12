@@ -1,0 +1,227 @@
+/**
+ * basau motion — snappy street-food energy (css-animations skill patterns).
+ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.animate-in {
+  opacity: 0;
+  animation-name: basau-rise;
+  animation-duration: 480ms;
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  animation-fill-mode: both;
+  animation-delay: calc(var(--i, 0) * 65ms);
+}
+
+@keyframes basau-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.risk-pulse {
+  animation-name: basau-risk-pulse;
+  animation-duration: 1200ms;
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  animation-iteration-count: 3;
+  animation-fill-mode: both;
+}
+
+@keyframes basau-risk-pulse {
+  from {
+    box-shadow: 0 0 0 0 rgba(196, 30, 30, 0.5);
+  }
+  45% {
+    box-shadow: 0 0 0 10px rgba(196, 30, 30, 0);
+  }
+  to {
+    box-shadow: 0 0 0 0 rgba(196, 30, 30, 0);
+  }
+}
+
+.panel-enter {
+  animation-name: basau-panel;
+  animation-duration: 360ms;
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  animation-fill-mode: both;
+}
+
+@keyframes basau-panel {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface-2, rgba(245, 230, 211, 0.5));
+  border-radius: var(--radius-sm, 10px);
+}
+
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(240, 160, 48, 0.25),
+    transparent
+  );
+  animation-name: basau-shimmer;
+  animation-duration: 1100ms;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: 3;
+  animation-fill-mode: both;
+}
+
+@keyframes basau-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.btn-press:active {
+  transform: scale(0.97) translateY(2px) !important;
+  transition: transform 100ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Logo gentle float on landing */
+.logo-float {
+  animation-name: basau-float;
+  animation-duration: 4s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: 3;
+  animation-fill-mode: both;
+}
+
+@keyframes basau-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* Steam motif (decorative) */
+.steam {
+  display: inline-flex;
+  gap: 3px;
+  margin-left: 0.35rem;
+  vertical-align: middle;
+}
+
+.steam i {
+  display: block;
+  width: 4px;
+  height: 12px;
+  background: var(--basau-orange);
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: basau-steam 1.2s ease-in-out infinite;
+  animation-fill-mode: both;
+}
+
+.steam i:nth-child(2) {
+  animation-delay: 200ms;
+  height: 16px;
+}
+
+.steam i:nth-child(3) {
+  animation-delay: 400ms;
+}
+
+@keyframes basau-steam {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0) scaleY(0.8);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translateY(-4px) scaleY(1.1);
+  }
+}
+
+.dots span {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 4px;
+  border-radius: 50%;
+  background: var(--basau-orange);
+  animation: dot-pop 800ms ease-out both;
+  animation-delay: calc(var(--i) * 100ms);
+}
+
+@keyframes dot-pop {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Chat FAB nháy */
+.chat-fab--blink {
+  animation-name: fab-blink;
+  animation-duration: 2s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+@keyframes fab-blink {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 6px 24px rgba(240, 160, 48, 0.45);
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow:
+      0 8px 32px rgba(255, 192, 77, 0.65),
+      0 0 0 10px rgba(240, 160, 48, 0.15);
+  }
+}
+
+.chat-panel.panel-enter {
+  animation-name: chat-panel-up;
+  animation-duration: 320ms;
+}
+
+@keyframes chat-panel-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

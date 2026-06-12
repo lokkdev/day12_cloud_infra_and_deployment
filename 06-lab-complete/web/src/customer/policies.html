@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>basau — Chính sách</title>
+    <link rel="stylesheet" href="/public/css/base.css" />
+    <link rel="stylesheet" href="/public/css/animations.css" />
+  </head>
+  <body class="recovery-page policies-page">
+    <header class="app-header">
+      <a class="brand" href="/">
+        <img
+          class="brand__logo"
+          src="/public/assets/basau-logo.svg"
+          alt="basau"
+          width="52"
+          height="52"
+        />
+        <div class="brand__text">
+          <span class="brand__name">basau</span>
+          <span class="brand__tag">Chính sách</span>
+        </div>
+      </a>
+    </header>
+
+    <main class="layout recovery-phone">
+      <article class="card policy-card panel-enter">
+        <div class="policy-card__hero">
+          <h1 class="policy-card__title">Chính sách của basau</h1>
+          <p class="policy-card__lead">
+            BaSau Food áp dụng các quy định sau khi hỗ trợ đơn hàng, hủy, hoàn tiền và chuyển
+            nhân viên.
+          </p>
+        </div>
+        <div id="policy-content" class="policy-card__body"></div>
+        <div class="policy-card__footer">
+          <a class="btn btn--ghost btn-press" id="back-link" href="index.html">← Quay lại đơn</a>
+        </div>
+      </article>
+    </main>
+
+    <script type="module">
+      import { renderPolicySections } from "/src/shared/policiesContent.js";
+
+      const params = new URLSearchParams(location.search);
+      const order = params.get("order");
+      const back = document.getElementById("back-link");
+      back.href = order
+        ? `/?order=${encodeURIComponent(order)}`
+        : "/";
+
+      renderPolicySections(document.getElementById("policy-content"));
+    </script>
+  </body>
+</html>

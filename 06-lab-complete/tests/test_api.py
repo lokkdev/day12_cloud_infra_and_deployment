@@ -5,11 +5,25 @@ from unittest.mock import patch
 from app.basau.agent import AgentReply
 
 
-def test_root(client):
+def test_root_serves_customer_ui(client):
     res = client.get("/")
+    assert res.status_code == 200
+    assert "text/html" in res.headers.get("content-type", "")
+    assert "basau" in res.text.lower()
+
+
+def test_api_info(client):
+    res = client.get("/api")
     assert res.status_code == 200
     body = res.json()
     assert body["endpoints"]["health"] == "GET /health"
+
+
+def test_chat_status(client):
+    res = client.get("/api/chat/status")
+    assert res.status_code == 200
+    body = res.json()
+    assert "aiEnabled" in body
 
 
 def test_health(client):

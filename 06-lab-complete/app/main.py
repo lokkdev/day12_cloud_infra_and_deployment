@@ -22,15 +22,21 @@ import time
 from collections import defaultdict, deque
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
+from pathlib import Path
 
 import uvicorn
 from app.basau.agent import ask as agent_ask
 from app.basau.agent import is_ai_enabled
+from app.chat_api import router as chat_router
 from app.config import settings
 from fastapi import Depends, FastAPI, HTTPException, Request, Response, Security
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.security.api_key import APIKeyHeader
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
+
+WEB_ROOT = Path(__file__).resolve().parent.parent / "web"
 
 # ─────────────────────────────────────────────────────────
 # Logging — JSON structured
@@ -144,6 +150,8 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type", "X-API-Key"],
 )
 
+app.include_router(chat_router)
+
 
 @app.middleware("http")
 async def request_middleware(request: Request, call_next):
@@ -199,8 +207,8 @@ class AskResponse(BaseModel):
 # ─────────────────────────────────────────────────────────
 
 
-@app.get("/", tags=["Info"])
-def root():
+@app.get("/api", tags=["Info"])
+def api_info():
     return {
         "app": settings.app_name,
         "version": settings.app_version,
@@ -209,8 +217,25 @@ def root():
             "ask": "POST /ask (requires X-API-Key)",
             "health": "GET /health",
             "ready": "GET /ready",
+            "chat_ui": "GET /",
         },
     }
+
+
+@app.get("/", include_in_schema=False)
+def customer_ui():
+    return FileResponse(WEB_ROOT / "src/customer/index.html")
+
+
+@app.get("/policies", include_in_schema=False)
+def policies_page():
+    return FileResponse(WEB_ROOT / "src/customer/policies.html")
+
+
+if WEB_ROOT.is_dir():
+    app.mount("/public", StaticFiles(directory=WEB_ROOT / "public"), name="public")
+    app.mount("/src", StaticFiles(directory=WEB_ROOT / "src"), name="src")
+    app.mount("/data", StaticFiles(directory=WEB_ROOT / "data"), name="data")
 
 
 @app.post("/ask", response_model=AskResponse, tags=["Agent"])

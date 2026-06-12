@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>basau — Đơn của bạn</title>
+    <link rel="stylesheet" href="/public/css/base.css" />
+    <link rel="stylesheet" href="/public/css/animations.css" />
+  </head>
+  <body class="recovery-page">
+    <header class="app-header">
+      <a class="brand" href="/">
+        <img
+          class="brand__logo"
+          src="/public/assets/basau-logo.svg"
+          alt="basau"
+          width="52"
+          height="52"
+        />
+        <div class="brand__text">
+          <span class="brand__name">basau</span>
+          <span class="brand__tag">Đơn của bạn</span>
+        </div>
+      </a>
+      <select id="order-picker" class="select-basau" aria-label="Chọn đơn demo"></select>
+    </header>
+
+    <main class="layout recovery-phone">
+      <article class="card recovery-card panel-enter" id="recovery-card">
+        <div class="recovery-card__banner" id="recovery-banner">
+          <div class="recovery-banner__brand">
+            <img
+              class="brand__logo logo-float"
+              src="/public/assets/basau-logo.svg"
+              alt=""
+              width="48"
+              height="48"
+            />
+            <p class="recovery-banner__title">basau Food</p>
+            <span class="speed-tag" id="banner-tag">FAST</span>
+          </div>
+          <dl class="recovery-banner__facts">
+            <div class="recovery-banner__row">
+              <dt>Mã đơn hàng</dt>
+              <dd id="banner-order-id">—</dd>
+            </div>
+            <div class="recovery-banner__row">
+              <dt>Trạng thái chi tiết</dt>
+              <dd id="banner-order-status">—</dd>
+            </div>
+            <div class="recovery-banner__row">
+              <dt>Chi tiết đơn hàng</dt>
+              <dd id="banner-order-detail">—</dd>
+            </div>
+          </dl>
+        </div>
+        <div class="recovery-card__body">
+          <div id="recovery-body" class="shimmer" style="min-height: 120px"></div>
+        </div>
+        <div class="recovery__actions" id="recovery-actions" hidden></div>
+      </article>
+    </main>
+
+    <div id="chat-backdrop" class="chat-backdrop" hidden></div>
+    <section
+      id="chat-panel"
+      class="chat-panel"
+      hidden
+      role="dialog"
+      aria-labelledby="chat-title"
+      aria-modal="true"
+    >
+      <header class="chat-panel__head">
+        <div>
+          <strong id="chat-title">Trợ lý BaSau</strong>
+          <small id="chat-subtitle">Hỗ trợ đơn hàng</small>
+        </div>
+        <button
+          type="button"
+          id="chat-close"
+          class="chat-panel__close"
+          aria-label="Đóng chat"
+        >
+          ×
+        </button>
+      </header>
+      <div id="chat-messages" class="chat-panel__messages"></div>
+      <div
+        id="chat-quick-replies"
+        class="chat-quick-replies"
+        aria-label="Gợi ý câu hỏi"
+        hidden
+      ></div>
+      <form id="chat-form" class="chat-panel__form">
+        <input
+          id="chat-input"
+          class="chat-panel__input"
+          type="text"
+          placeholder="Nhắn tin cho Trợ lý BaSau..."
+          autocomplete="off"
+        />
+        <button type="submit" class="chat-panel__send btn-press">Gửi</button>
+      </form>
+    </section>
+
+    <button
+      type="button"
+      id="chat-fab"
+      class="chat-fab chat-fab--blink btn-press"
+      aria-label="Mở chat hỗ trợ"
+      aria-expanded="false"
+      aria-controls="chat-panel"
+    >
+      <span class="chat-fab__badge" aria-hidden="true"></span>
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path
+          d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.2L4 17.2V4h16v12z"
+        />
+      </svg>
+    </button>
+
+    <script type="module">
+      import { loadData } from "/src/services/dataLoader.js";
+      import {
+        buildCustomerMessage,
+        getCustomerViewType,
+        getBannerTag,
+      } from "/src/services/aiExplain.js";
+      import { initChatWidget } from "/src/shared/chatWidget.js";
+      import {
+        renderMerchantAndJourney,
+        bindOrderEditButton,
+      } from "/src/shared/recoveryExtras.js";
+      import { enrichOrder } from "/src/services/orderPolicy.js";
+      import { policiesPageHref } from "/src/shared/policiesContent.js";
+      import {
+        getOrderDetailStatus,
+        getOrderItemLine,
+      } from "/src/services/orderDisplay.js";
+      import {
+        getOrderStatusTier,
+        getStatusTierBadgeClass,
+        getStatusTierBannerClass,
+      } from "/src/services/orderStatus.js";
+
+      const params = new URLSearchParams(location.search);
+      const picker = document.getElementById("order-picker");
+      const bodyEl = document.getElementById("recovery-body");
+      const actionsEl = document.getElementById("recovery-actions");
+      const cardEl = document.getElementById("recovery-card");
+      const bannerEl = document.getElementById("recovery-banner");
+      const bannerTagEl = document.getElementById("banner-tag");
+      const bannerOrderIdEl = document.getElementById("banner-order-id");
+      const bannerStatusEl = document.getElementById("banner-order-status");
+      const bannerDetailEl = document.getElementById("banner-order-detail");
+
+      let orders = [];
+      let chats = [];
+      let currentOrder = null;
+      let selectedRating = 0;
+      let chatWidget = null;
+      let chatSessionOrderId = null;
+
+      function messageClass(view) {
+        return {
+          completed: "recovery-message--success",
+          cancelled: "recovery-message--muted",
+          in_progress: "recovery-message--neutral",
+          warning: "recovery-message--warning",
+          recovery: "recovery-message--danger",
+        }[view];
+      }
+
+      function renderHeader(order) {
+        const tier = getOrderStatusTier(order);
+        const view = getCustomerViewType(order);
+        const pulse = view === "recovery" ? " risk-pulse" : "";
+
+        bannerEl.className = "recovery-card__banner";
+        const bannerMod = getStatusTierBannerClass(tier);
+        if (bannerMod) bannerEl.classList.add(bannerMod);
+        bannerTagEl.textContent = getBannerTag(order);
+
+        bannerOrderIdEl.innerHTML = `<span class="recovery-banner__order-id">${order.order_id}</span>
+          <span class="badge ${getStatusTierBadgeClass(tier)}${pulse}">${getOrderDetailStatus(order)}</span>`;
+        bannerStatusEl.textContent = getOrderDetailStatus(order);
+        bannerDetailEl.textContent = getOrderItemLine(order);
+      }
+
+      function bindStarRating() {
+        const stars = actionsEl.querySelectorAll(".star-btn");
+        stars.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            selectedRating = Number(btn.dataset.value);
+            stars.forEach((s) => {
+              const v = Number(s.dataset.value);
+              s.classList.toggle("is-active", v <= selectedRating);
+              s.setAttribute("aria-pressed", v <= selectedRating ? "true" : "false");
+            });
+          });
+        });
+
+        const form = document.getElementById("feedback-form");
+        const toast = document.getElementById("feedback-toast");
+        form?.addEventListener("submit", (e) => {
+          e.preventDefault();
+          if (selectedRating < 1) {
+            toast.hidden = false;
+            toast.textContent = "Vui lòng chọn số sao từ 1 đến 5.";
+            toast.style.background = "rgba(196, 30, 30, 0.1)";
+            toast.style.color = "var(--red)";
+            toast.style.borderColor = "rgba(196, 30, 30, 0.25)";
+            return;
+          }
+          const note = document.getElementById("feedback-note").value.trim();
+          toast.hidden = false;
+          toast.style.background = "rgba(26, 122, 66, 0.12)";
+          toast.style.color = "var(--green)";
+          toast.style.borderColor = "rgba(26, 122, 66, 0.25)";
+          toast.textContent = note
+            ? `Cảm ơn bạn! Đã ghi ${selectedRating} sao và góp ý của bạn.`
+            : `Cảm ơn bạn! Đã ghi ${selectedRating} sao.`;
+        });
+      }
+
+      function renderInProgress(order, msg) {
+        bodyEl.innerHTML = `
+          ${renderExtras(order)}
+          <p class="recovery-message ${messageClass("in_progress")} animate-in" style="--i: 3; margin-top:1rem">${msg}</p>`;
+
+        if (order.is_cancelable) {
+          actionsEl.hidden = false;
+          actionsEl.innerHTML = `
+            <button class="btn btn-press animate-in" style="--i: 5" type="button" data-action="cancel-order">
+              Hủy đơn & hoàn tiền
+            </button>`;
+          bindCancelOrderButtons();
+        } else {
+          actionsEl.hidden = true;
+          actionsEl.innerHTML = "";
+        }
+      }
+
+      function renderCancelled(order, msg) {
+        bodyEl.innerHTML = `
+          ${renderExtras(order)}
+          <p class="recovery-message ${messageClass("cancelled")} animate-in" style="--i: 3; margin-top:1rem">${msg}</p>`;
+        actionsEl.hidden = true;
+        actionsEl.innerHTML = "";
+      }
+
+      function renderCompleted(order, msg) {
+        bodyEl.innerHTML = `
+          ${renderExtras(order)}
+          <p class="recovery-message recovery-message--success animate-in" style="--i: 3; margin-top:1rem">${msg}</p>`;
+
+        actionsEl.hidden = false;
+        actionsEl.innerHTML = `
+          <div class="rating-block animate-in" style="--i: 4">
+            <span class="rating-block__label">Đánh giá</span>
+            <div class="rating-stars" role="group" aria-label="Chọn từ 1 đến 5 sao">
+              ${[1, 2, 3, 4, 5]
+                .map(
+                  (n) =>
+                    `<button type="button" class="star-btn btn-press" data-value="${n}" aria-label="${n} sao" aria-pressed="false">★</button>`
+                )
+                .join("")}
+            </div>
+          </div>
+          <form class="feedback-form animate-in" style="--i: 5" id="feedback-form">
+            <label class="rating-block__label" for="feedback-note">Góp ý (tuỳ chọn)</label>
+            <textarea
+              id="feedback-note"
+              class="feedback-input"
+              placeholder="Chia sẻ trải nghiệm của bạn..."
+              rows="3"
+            ></textarea>
+            <button class="btn btn-press" type="submit">Gửi đánh giá</button>
+            <p class="toast" id="feedback-toast" hidden></p>
+          </form>`;
+        selectedRating = 0;
+        bindStarRating();
+      }
+
+      function renderWarning(order, msg) {
+        bodyEl.innerHTML = `
+          ${renderExtras(order)}
+          <p class="recovery-message recovery-message--warning animate-in" style="--i: 3; margin-top:1rem">${msg}</p>
+          <p class="animate-in order-row__meta" style="--i: 4; margin-top:0.75rem; text-align:center">
+            <span class="steam" aria-hidden="true"><i></i><i></i><i></i></span>
+            Đang xử lý theo chính sách basau
+          </p>`;
+
+        actionsEl.hidden = false;
+        actionsEl.innerHTML = `
+          <button class="btn btn-press animate-in" style="--i: 5" type="button" data-action="cancel-order">
+            Hủy đơn & hoàn tiền
+          </button>
+          <button class="btn btn--ghost btn-press animate-in" style="--i: 6" type="button" data-action="human-support">
+            Gặp nhân viên hỗ trợ
+          </button>`;
+        bindCancelOrderButtons();
+        bindHumanSupportButtons();
+      }
+
+      function bindHumanSupportButtons() {
+        actionsEl.querySelectorAll('[data-action="human-support"]').forEach((btn) => {
+          btn.onclick = async () => {
+            const fab = document.getElementById("chat-fab");
+            if (fab && document.getElementById("chat-panel")?.hidden) fab.click();
+            await chatWidget?.escalate?.("Khách bấm Gặp nhân viên trên màn hình đơn");
+          };
+        });
+      }
+
+      function bindCancelOrderButtons() {
+        actionsEl.querySelectorAll('[data-action="cancel-order"]').forEach((btn) => {
+          btn.onclick = () => chatWidget?.requestCancelOrder?.();
+        });
+      }
+
+      function renderRecovery(order, msg) {
+        bodyEl.innerHTML = `
+          ${renderExtras(order)}
+          <p class="recovery-message recovery-message--danger animate-in" style="--i: 3; margin-top:1rem">${msg}</p>
+          <p class="animate-in order-row__meta policy-link-wrap" style="--i: 4; margin-top:0.75rem; text-align:center">
+            <a class="policy-link" href="${policiesPageHref(params.get("order"))}">Chính sách của basau</a>
+          </p>`;
+
+        actionsEl.hidden = false;
+        actionsEl.innerHTML = `
+          <button class="btn btn-press animate-in" style="--i: 5" type="button" data-action="cancel-order">
+            Hủy đơn & hoàn tiền
+          </button>
+          <button class="btn btn--ghost btn-press animate-in" style="--i: 6" type="button" data-action="human-support">
+            Gặp nhân viên hỗ trợ
+          </button>`;
+        bindCancelOrderButtons();
+        bindHumanSupportButtons();
+      }
+
+      function applyOrderPatch(patch) {
+        if (!patch?.order_id) return;
+        const idx = orders.findIndex((o) => o.order_id === patch.order_id);
+        if (idx >= 0) {
+          orders[idx] = { ...orders[idx], ...patch };
+          if (currentOrder?.order_id === patch.order_id) {
+            renderOrder(orders[idx]);
+          }
+        }
+      }
+
+      function renderExtras(order) {
+        return renderMerchantAndJourney(enrichOrder(order));
+      }
+
+      function afterRenderOrder(order) {
+        bindOrderEditButton(enrichOrder(order), (note) => {
+          alert(`Đã gửi yêu cầu chỉnh sửa (demo): «${note}» — quán sẽ xác nhận lại.`);
+        });
+      }
+
+      function renderOrder(order) {
+        cardEl.classList.remove("panel-enter");
+        void cardEl.offsetWidth;
+        cardEl.classList.add("panel-enter");
+
+        bodyEl.classList.remove("shimmer");
+        const enriched = enrichOrder(order);
+        const view = getCustomerViewType(enriched);
+        const msg = buildCustomerMessage(enriched);
+
+        renderHeader(enriched);
+
+        if (view === "completed") {
+          renderCompleted(enriched, msg);
+        } else if (view === "cancelled") {
+          renderCancelled(enriched, msg);
+        } else if (view === "warning") {
+          renderWarning(enriched, msg);
+        } else if (view === "recovery") {
+          renderRecovery(enriched, msg);
+        } else {
+          renderInProgress(enriched, msg);
+        }
+
+        currentOrder = enriched;
+        afterRenderOrder(enriched);
+
+        if (chatWidget) {
+          if (chatSessionOrderId !== enriched.order_id) {
+            chatSessionOrderId = enriched.order_id;
+            chatWidget.refresh({ force: true });
+          } else {
+            chatWidget.updateHeader();
+          }
+        }
+      }
+
+      async function init() {
+        try {
+          const data = await loadData();
+          orders = data.orders;
+          chats = data.chats;
+
+          chatWidget = initChatWidget({
+            getOrder: () => currentOrder,
+            getChats: () => chats,
+            onOrderUpdated: applyOrderPatch,
+          });
+
+          picker.innerHTML = orders
+            .map(
+              (o) =>
+                `<option value="${o.order_id}">${o.order_id} · ${getOrderDetailStatus(o)}</option>`
+            )
+            .join("");
+
+          const initial =
+            params.get("order") ||
+            orders.find((o) => o.order_id === "ORD-002")?.order_id ||
+            orders[0]?.order_id;
+          picker.value = initial;
+          renderOrder(orders.find((o) => o.order_id === initial));
+
+          picker.addEventListener("change", () => {
+            const o = orders.find((x) => x.order_id === picker.value);
+            if (o) {
+              history.replaceState(null, "", `?order=${o.order_id}`);
+              chatSessionOrderId = null;
+              renderOrder(o);
+            }
+          });
+        } catch (err) {
+          bodyEl.classList.remove("shimmer");
+          bodyEl.innerHTML = `<p class="empty-state" style="color:var(--red)">${err.message}</p>`;
+        }
+      }
+
+      init();
+    </script>
+  </body>
+</html>

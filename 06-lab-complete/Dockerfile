@@ -30,6 +30,7 @@ COPY app/ ./app/
 COPY utils/ ./utils/
 COPY ai-model/ ./ai-model/
 COPY data/ ./data/
+COPY web/ ./web/
 
 RUN chown -R agent:agent /app
 
