@@ -31,8 +31,7 @@ import uvicorn
 
 from app.config import settings
 
-# Mock LLM (thay bằng OpenAI/Anthropic khi có API key)
-from utils.mock_llm import ask as llm_ask
+from app.basau.agent import ask as agent_ask, is_ai_enabled
 
 # ─────────────────────────────────────────────────────────
 # Logging — JSON structured
@@ -165,12 +164,21 @@ async def request_middleware(request: Request, call_next):
 class AskRequest(BaseModel):
     question: str = Field(..., min_length=1, max_length=2000,
                           description="Your question for the agent")
+    order_id: str | None = Field(
+        None, description="Optional order ID (ORD-xxx) for BaSau Food context"
+    )
+    session_id: str | None = Field(
+        None, description="Optional session ID for multi-turn conversation"
+    )
 
 class AskResponse(BaseModel):
     question: str
     answer: str
     model: str
     timestamp: str
+    session_id: str | None = None
+    provider: str = "mock"
+    escalated: bool = False
 
 # ─────────────────────────────────────────────────────────
 # Endpoints
@@ -214,16 +222,26 @@ async def ask_agent(
         "client": str(request.client.host) if request.client else "unknown",
     }))
 
-    answer = llm_ask(body.question)
+    try:
+        result = agent_ask(
+            body.question,
+            order_id=body.order_id,
+            session_id=body.session_id,
+        )
+    except RuntimeError as exc:
+        raise HTTPException(502, str(exc)) from exc
 
-    output_tokens = len(answer.split()) * 2
+    output_tokens = len(result.answer.split()) * 2
     check_and_record_cost(0, output_tokens)
 
     return AskResponse(
         question=body.question,
-        answer=answer,
-        model=settings.llm_model,
+        answer=result.answer,
+        model=result.model,
         timestamp=datetime.now(timezone.utc).isoformat(),
+        session_id=result.session_id,
+        provider=result.provider,
+        escalated=result.escalated,
     )
 
 
@@ -231,7 +249,13 @@ async def ask_agent(
 def health():
     """Liveness probe. Platform restarts container if this fails."""
     status = "ok"
-    checks = {"llm": "mock" if not settings.openai_api_key else "openai"}
+    if is_ai_enabled():
+        llm_status = "gemini"
+    elif settings.openai_api_key:
+        llm_status = "openai"
+    else:
+        llm_status = "mock"
+    checks = {"llm": llm_status, "agent": "basau-food"}
     return {
         "status": status,
         "version": settings.app_version,

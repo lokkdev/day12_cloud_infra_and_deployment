@@ -1,0 +1,677 @@
+{
+  "orders": [
+    {
+      "order_id": "ORD-001",
+      "customer_name": "Vũ Thành Lộc",
+      "merchant_name": "Bún Đậu Mắm Tôm ",
+      "item_name": "Bún đậu mắm tôm đầy đủ",
+      "total_amount": 85000,
+      "status": "đang chuẩn bị",
+      "created_at": "2026-06-04T09:00:00Z",
+      "food_ready_at": "2026-06-04T09:20:00Z",
+      "payment_state": "paid",
+      "driver_id": null,
+      "active_driver_orders": 4,
+      "risk_level": "Red",
+      "reason_code": "Tài xế ghép quá nhiều đơn",
+      "is_cancelable": false
+    },
+    {
+      "order_id": "ORD-002",
+      "customer_name": "Nguyễn Danh Thành",
+      "merchant_name": "Cơm Tấm Sài Gòn",
+      "item_name": "Cơm tấm sườn bì chả",
+      "total_amount": 72000,
+      "status": "hoàn thành",
+      "created_at": "2026-06-04T10:45:00Z",
+      "food_ready_at": "2026-06-04T10:52:00Z",
+      "payment_state": "paid",
+      "driver_id": "DRV-102",
+      "active_driver_orders": 1,
+      "risk_level": "Green",
+      "reason_code": null,
+      "is_cancelable": false
+    },
+    {
+      "order_id": "ORD-003",
+      "customer_name": "Hoàng Hải",
+      "merchant_name": "Pizza 4P's Lê Đại Hành",
+      "item_name": "Pizza Teriyoka M",
+      "total_amount": 189000,
+      "status": "đang chuẩn bị",
+      "created_at": "2026-06-04T11:00:00Z",
+      "food_ready_at": null,
+      "payment_state": "paid",
+      "driver_id": null,
+      "active_driver_orders": 0,
+      "risk_level": "Yellow",
+      "reason_code": "Chưa có tài xế quá ngưỡng",
+      "is_cancelable": false
+    },
+    {
+      "order_id": "ORD-004",
+      "customer_name": "Vũ Hải Dương",
+      "merchant_name": "Phở Thìn Bò",
+      "item_name": "Phở bò tái nạm",
+      "total_amount": 95000,
+      "status": "đang chuẩn bị",
+      "created_at": "2026-06-04T08:30:00Z",
+      "food_ready_at": "2026-06-04T08:50:00Z",
+      "payment_state": "paid",
+      "driver_id": null,
+      "active_driver_orders": 0,
+      "risk_level": "Red",
+      "reason_code": "Chưa có tài xế quá ngưỡng",
+      "is_cancelable": false
+    },
+    {
+      "order_id": "ORD-005",
+      "customer_name": "Vũ Ngọc Vinh",
+      "merchant_name": "Bánh Mì Hồng Hoa",
+      "item_name": "Bánh mì thịt nướng",
+      "total_amount": 45000,
+      "status": "đang giao",
+      "created_at": "2026-06-04T09:15:00Z",
+      "food_ready_at": "2026-06-04T09:25:00Z",
+      "payment_state": "paid",
+      "driver_id": "DRV-101",
+      "active_driver_orders": 4,
+      "risk_level": "Red",
+      "reason_code": "Tài xế ghép quá nhiều đơn",
+      "is_cancelable": false
+    },
+    {
+      "order_id": "ORD-006",
+      "customer_name": "Vũ Tuấn Phương",
+      "merchant_name": "Lẩu Thái Tom Yum",
+      "item_name": "Lẩu Tom Yum 2 người",
+      "total_amount": 320000,
+      "status": "đang chuẩn bị",
+      "created_at": "2026-06-04T10:00:00Z",
+      "food_ready_at": "2026-06-04T10:05:00Z",
+      "payment_state": "paid",
+      "driver_id": "DRV-103",
+      "active_driver_orders": 2,
+      "risk_level": "Red",
+      "reason_code": "Đồ ăn chờ quá lâu sau khi quán làm xong",
+      "is_cancelable": false
+    },
+    {
+      "order_id": "ORD-007",
+      "customer_name": "Trần Minh Anh",
+      "merchant_name": "Cafe Highlands Nguyễn Huệ",
+      "item_name": "Trà đào cam sả + croissant",
+      "total_amount": 68000,
+      "status": "đang chuẩn bị",
+      "created_at": "2026-06-04T22:15:00Z",
+      "food_ready_at": "2026-06-04T22:30:00Z",
+      "payment_state": "paid",
+      "driver_id": null,
+      "active_driver_orders": 0,
+      "risk_level": "Red",
+      "reason_code": "Quán sắp đóng cửa",
+      "is_cancelable": false
+    },
+    {
+      "order_id": "ORD-008",
+      "customer_name": "Lê Thị Hương",
+      "merchant_name": "Trà Sữa Gong Cha",
+      "item_name": "Trà sữa trân châu đường đen",
+      "total_amount": 55000,
+      "status": "đã xác nhận",
+      "created_at": "2026-06-04T14:20:00Z",
+      "food_ready_at": null,
+      "payment_state": "mismatch",
+      "driver_id": null,
+      "active_driver_orders": 0,
+      "risk_level": "Red",
+      "reason_code": "Lệch trạng thái thanh toán",
+      "is_cancelable": false
+    },
+    {
+      "order_id": "ORD-009",
+      "customer_name": "Phạm Quốc Bảo",
+      "merchant_name": "Gà Rán KFC Vincom",
+      "item_name": "Combo gà rán 2 người",
+      "total_amount": 165000,
+      "status": "đã đặt hàng",
+      "created_at": "2026-06-04T12:40:00Z",
+      "food_ready_at": null,
+      "payment_state": "paid",
+      "driver_id": null,
+      "active_driver_orders": 2,
+      "risk_level": "Yellow",
+      "reason_code": "Chưa có tài xế quá ngưỡng",
+      "is_cancelable": true
+    },
+    {
+      "order_id": "ORD-010",
+      "customer_name": "Đỗ Thị Lan",
+      "merchant_name": "Bún Chả Hà Nội 36",
+      "item_name": "Bún chả đặc biệt",
+      "total_amount": 88000,
+      "status": "đang chuẩn bị",
+      "created_at": "2026-06-04T13:00:00Z",
+      "food_ready_at": "2026-06-04T13:18:00Z",
+      "payment_state": "paid",
+      "driver_id": null,
+      "active_driver_orders": 0,
+      "risk_level": "Red",
+      "reason_code": "Cần hỗ trợ người thật",
+      "is_cancelable": false
+    },
+    {
+      "order_id": "ORD-011",
+      "customer_name": "Nguyễn Minh Khôi",
+      "merchant_name": "Cơm Tấm Sài Gòn",
+      "item_name": "Cơm tấm sườn + trứng",
+      "total_amount": 65000,
+      "status": "đã đặt hàng",
+      "created_at": "2026-06-04T15:05:00Z",
+      "food_ready_at": null,
+      "payment_state": "paid",
+      "driver_id": null,
+      "active_driver_orders": 0,
+      "risk_level": "Green",
+      "reason_code": null,
+      "is_cancelable": true
+    },
+    {
+      "order_id": "ORD-012",
+      "customer_name": "Trần Thu Hà",
+      "merchant_name": "Pizza 4P's Lê Đại Hành",
+      "item_name": "Pizza 4 Cheese L",
+      "total_amount": 245000,
+      "status": "đã xác nhận",
+      "created_at": "2026-06-04T11:45:00Z",
+      "food_ready_at": null,
+      "payment_state": "paid",
+      "driver_id": null,
+      "active_driver_orders": 0,
+      "risk_level": "Yellow",
+      "reason_code": "Chưa có tài xế quá ngưỡng",
+      "is_cancelable": false
+    },
+    {
+      "order_id": "ORD-013",
+      "customer_name": "Lê Hoàng Nam",
+      "merchant_name": "Phở Thìn Bò",
+      "item_name": "Phở tái lăn tiêu",
+      "total_amount": 98000,
+      "status": "đã xác nhận",
+      "created_at": "2026-06-04T16:10:00Z",
+      "food_ready_at": null,
+      "payment_state": "paid",
+      "driver_id": null,
+      "active_driver_orders": 0,
+      "risk_level": "Green",
+      "reason_code": null,
+      "is_cancelable": false
+    },
+    {
+      "order_id": "ORD-014",
+      "customer_name": "Phạm Thảo My",
+      "merchant_name": "Bánh Mì Hồng Hoa",
+      "item_name": "Bánh mì pate + chả lụa",
+      "total_amount": 38000,
+      "status": "đang giao",
+      "created_at": "2026-06-04T12:20:00Z",
+      "food_ready_at": "2026-06-04T12:28:00Z",
+      "payment_state": "paid",
+      "driver_id": "DRV-102",
+      "active_driver_orders": 1,
+      "risk_level": "Green",
+      "reason_code": null,
+      "is_cancelable": false
+    },
+    {
+      "order_id": "ORD-015",
+      "customer_name": "Hoàng Quốc An",
+      "merchant_name": "Gà Rán KFC Vincom",
+      "item_name": "Gà giòn cay + khoai tây",
+      "total_amount": 89000,
+      "status": "đang giao",
+      "created_at": "2026-06-04T13:40:00Z",
+      "food_ready_at": "2026-06-04T13:52:00Z",
+      "payment_state": "paid",
+      "driver_id": "DRV-105",
+      "active_driver_orders": 3,
+      "risk_level": "Yellow",
+      "reason_code": "Tài xế ghép quá nhiều đơn",
+      "is_cancelable": false
+    },
+    {
+      "order_id": "ORD-016",
+      "customer_name": "Võ Thị Mai",
+      "merchant_name": "Trà Sữa Gong Cha",
+      "item_name": "Trà sữa khoai môn",
+      "total_amount": 48000,
+      "status": "đã hủy",
+      "created_at": "2026-06-04T07:50:00Z",
+      "food_ready_at": null,
+      "payment_state": "refunded",
+      "driver_id": null,
+      "active_driver_orders": 0,
+      "risk_level": "Yellow",
+      "reason_code": null,
+      "is_cancelable": false
+    },
+    {
+      "order_id": "ORD-017",
+      "customer_name": "Bùi Đức Thắng",
+      "merchant_name": "Cafe Highlands Nguyễn Huệ",
+      "item_name": "Cà phê sữa đá + bánh flan",
+      "total_amount": 72000,
+      "status": "đã hủy",
+      "created_at": "2026-06-04T22:00:00Z",
+      "food_ready_at": "2026-06-04T22:20:00Z",
+      "payment_state": "refunded",
+      "driver_id": null,
+      "active_driver_orders": 0,
+      "risk_level": "Red",
+      "reason_code": "Quán sắp đóng cửa",
+      "is_cancelable": false
+    },
+    {
+      "order_id": "ORD-018",
+      "customer_name": "Đặng Văn Hùng",
+      "merchant_name": "Lẩu Thái Tom Yum",
+      "item_name": "Lẩu hải sản 2 người",
+      "total_amount": 385000,
+      "status": "hoàn thành",
+      "created_at": "2026-06-04T18:30:00Z",
+      "food_ready_at": "2026-06-04T18:55:00Z",
+      "payment_state": "paid",
+      "driver_id": "DRV-104",
+      "active_driver_orders": 0,
+      "risk_level": "Green",
+      "reason_code": null,
+      "is_cancelable": false
+    },
+    {
+      "order_id": "ORD-019",
+      "customer_name": "Ngô Thị Bích",
+      "merchant_name": "Bún Chả Hà Nội 36",
+      "item_name": "Bún chả + nem rán",
+      "total_amount": 92000,
+      "status": "đã đặt hàng",
+      "created_at": "2026-06-04T17:00:00Z",
+      "food_ready_at": null,
+      "payment_state": "pending",
+      "driver_id": null,
+      "active_driver_orders": 0,
+      "risk_level": "Yellow",
+      "reason_code": "Lệch trạng thái thanh toán",
+      "is_cancelable": true
+    },
+    {
+      "order_id": "ORD-020",
+      "customer_name": "Trịnh Văn Đạt",
+      "merchant_name": "Bún Đậu Mắm Tôm ",
+      "item_name": "Bún đậu combo 2 người",
+      "total_amount": 145000,
+      "status": "đang chuẩn bị",
+      "created_at": "2026-06-04T14:50:00Z",
+      "food_ready_at": null,
+      "payment_state": "paid",
+      "driver_id": "DRV-104",
+      "active_driver_orders": 1,
+      "risk_level": "Green",
+      "reason_code": null,
+      "is_cancelable": false
+    },
+    {
+      "order_id": "ORD-021",
+      "customer_name": "Lý Thanh Tùng",
+      "merchant_name": "Gà Rán KFC Vincom",
+      "item_name": "Bucket gia đình 8 miếng",
+      "total_amount": 299000,
+      "status": "đã xác nhận",
+      "created_at": "2026-06-04T19:15:00Z",
+      "food_ready_at": null,
+      "payment_state": "paid",
+      "driver_id": null,
+      "active_driver_orders": 0,
+      "risk_level": "Red",
+      "reason_code": "Cần hỗ trợ người thật",
+      "is_cancelable": false
+    },
+    {
+      "order_id": "ORD-022",
+      "customer_name": "Phan Minh Tuấn",
+      "merchant_name": "Phở Thìn Bò",
+      "item_name": "Phở đặc biệt + trứng chần",
+      "total_amount": 105000,
+      "status": "đang giao",
+      "created_at": "2026-06-04T12:00:00Z",
+      "food_ready_at": "2026-06-04T12:35:00Z",
+      "payment_state": "paid",
+      "driver_id": "DRV-107",
+      "active_driver_orders": 2,
+      "risk_level": "Red",
+      "reason_code": "Đồ ăn chờ quá lâu sau khi quán làm xong",
+      "is_cancelable": false
+    },
+    {
+      "order_id": "ORD-023",
+      "customer_name": "Hồ Ngọc Linh",
+      "merchant_name": "Pizza 4P's Lê Đại Hành",
+      "item_name": "Pizza Margherita M",
+      "total_amount": 175000,
+      "status": "đang chuẩn bị",
+      "created_at": "2026-06-04T15:30:00Z",
+      "food_ready_at": "2026-06-04T15:55:00Z",
+      "payment_state": "paid",
+      "driver_id": "DRV-103",
+      "active_driver_orders": 2,
+      "risk_level": "Yellow",
+      "reason_code": "Đồ ăn chờ quá lâu sau khi quán làm xong",
+      "is_cancelable": false
+    },
+    {
+      "order_id": "ORD-024",
+      "customer_name": "Mai Anh Tuấn",
+      "merchant_name": "Bánh Mì Hồng Hoa",
+      "item_name": "Bánh mì thập cẩm đặc biệt",
+      "total_amount": 42000,
+      "status": "đã hủy",
+      "created_at": "2026-06-04T10:10:00Z",
+      "food_ready_at": null,
+      "payment_state": "refunded",
+      "driver_id": null,
+      "active_driver_orders": 0,
+      "risk_level": "Red",
+      "reason_code": "Lệch trạng thái thanh toán",
+      "is_cancelable": false
+    },
+    {
+      "order_id": "ORD-025",
+      "customer_name": "Chu Văn Sơn",
+      "merchant_name": "Bún Chả Hà Nội 36",
+      "item_name": "Bún chả Hà Nội combo",
+      "total_amount": 95000,
+      "status": "hoàn thành",
+      "created_at": "2026-06-04T06:45:00Z",
+      "food_ready_at": "2026-06-04T07:05:00Z",
+      "payment_state": "paid",
+      "driver_id": "DRV-108",
+      "active_driver_orders": 1,
+      "risk_level": "Green",
+      "reason_code": null,
+      "is_cancelable": false
+    }
+  ],
+  "drivers": [
+    {
+      "driver_id": "DRV-101",
+      "name": "Nguyễn Văn A",
+      "current_lat": 21.0285,
+      "current_lng": 105.8542,
+      "active_orders_count": 4,
+      "status": "busy"
+    },
+    {
+      "driver_id": "DRV-102",
+      "name": "Trần Văn B",
+      "current_lat": 21.0245,
+      "current_lng": 105.8412,
+      "active_orders_count": 1,
+      "status": "delivering"
+    },
+    {
+      "driver_id": "DRV-103",
+      "name": "Lê Thị C",
+      "current_lat": 21.0312,
+      "current_lng": 105.8621,
+      "active_orders_count": 2,
+      "status": "busy"
+    },
+    {
+      "driver_id": "DRV-104",
+      "name": "Phạm Văn D",
+      "current_lat": 21.0198,
+      "current_lng": 105.8488,
+      "active_orders_count": 1,
+      "status": "available"
+    },
+    {
+      "driver_id": "DRV-105",
+      "name": "Hoàng Thị E",
+      "current_lat": 21.0356,
+      "current_lng": 105.8703,
+      "active_orders_count": 3,
+      "status": "busy"
+    },
+    {
+      "driver_id": "DRV-106",
+      "name": "Vũ Văn F",
+      "current_lat": 21.0271,
+      "current_lng": 105.8355,
+      "active_orders_count": 0,
+      "status": "offline"
+    },
+    {
+      "driver_id": "DRV-107",
+      "name": "Đinh Minh G",
+      "current_lat": 21.0334,
+      "current_lng": 105.8511,
+      "active_orders_count": 2,
+      "status": "delivering"
+    },
+    {
+      "driver_id": "DRV-108",
+      "name": "Ngô Thị H",
+      "current_lat": 21.0268,
+      "current_lng": 105.8399,
+      "active_orders_count": 1,
+      "status": "available"
+    }
+  ],
+  "chats": [
+    {
+      "chat_id": "CHAT-001",
+      "order_id": "ORD-001",
+      "messages": [
+        {
+          "sender": "customer",
+          "text": "Đơn trễ quá, sao chưa có tài xế?",
+          "time": "09:30"
+        },
+        {
+          "sender": "bot",
+          "text": "Chào bạn, đơn đang có chút chậm trễ do tài xế khu vực đang quá tải.",
+          "time": "09:30"
+        },
+        {
+          "sender": "admin",
+          "text": "Xin lỗi bạn, tôi là người hỗ trợ, đơn của bạn đã được ưu tiên.",
+          "time": "09:35"
+        }
+      ]
+    },
+    {
+      "chat_id": "CHAT-002",
+      "order_id": "ORD-003",
+      "messages": [
+        {
+          "sender": "customer",
+          "text": "20 phút rồi vẫn chưa thấy tài xế, có hủy được không?",
+          "time": "11:20"
+        },
+        {
+          "sender": "bot",
+          "text": "Đơn đang chuẩn bị — theo chính sách không hủy tự động lúc này. Bạn có thể gặp nhân viên nếu cần gấp.",
+          "time": "11:21"
+        }
+      ]
+    },
+    {
+      "chat_id": "CHAT-003",
+      "order_id": "ORD-004",
+      "messages": [
+        {
+          "sender": "customer",
+          "text": "Đã chờ hơn 30 phút, cho tôi hủy và hoàn tiền.",
+          "time": "09:05"
+        },
+        {
+          "sender": "bot",
+          "text": "Đơn đang chuẩn bị nên không thể hủy tự động. Mình có thể chuyển bạn sang nhân viên hỗ trợ.",
+          "time": "09:06"
+        },
+        {
+          "sender": "customer",
+          "text": "Tôi bấm hủy rồi mà không được?",
+          "time": "09:08"
+        },
+        {
+          "sender": "admin",
+          "text": "Mình đã nhận yêu cầu cho đơn ORD-004, nhân viên sẽ xử lý theo chính sách.",
+          "time": "09:12"
+        }
+      ]
+    },
+    {
+      "chat_id": "CHAT-004",
+      "order_id": "ORD-008",
+      "messages": [
+        {
+          "sender": "customer",
+          "text": "Tôi đã bị trừ tiền nhưng app báo chưa thanh toán.",
+          "time": "14:25"
+        },
+        {
+          "sender": "bot",
+          "text": "Bạn vui lòng kiểm tra lại phương thức thanh toán trong mục Đơn hàng.",
+          "time": "14:26"
+        },
+        {
+          "sender": "customer",
+          "text": "Tôi cần gặp người thật, không phải bot.",
+          "time": "14:28"
+        },
+        {
+          "sender": "admin",
+          "text": "Case thanh toán đã chuyển bộ phận xử lý, vui lòng không đóng phiên chat.",
+          "time": "14:35"
+        }
+      ]
+    },
+    {
+      "chat_id": "CHAT-005",
+      "order_id": "ORD-010",
+      "messages": [
+        {
+          "sender": "customer",
+          "text": "Cho tôi hủy đơn và hoàn tiền.",
+          "time": "13:25"
+        },
+        {
+          "sender": "bot",
+          "text": "Đơn đang chuẩn bị — không hủy tự động. Mình chuyển bạn sang nhân viên.",
+          "time": "13:26"
+        },
+        {
+          "sender": "customer",
+          "text": "Tôi hỏi lần 2 rồi, sao vẫn trả lời y chang?",
+          "time": "13:28"
+        },
+        {
+          "sender": "bot",
+          "text": "Mình đang kết nối nhân viên để xử lý yêu cầu của bạn.",
+          "time": "13:29"
+        },
+        {
+          "sender": "admin",
+          "text": "Xin lỗi bạn, nhân viên hỗ trợ sẽ xử lý yêu cầu hủy/hoàn trong 5 phút.",
+          "time": "13:32"
+        }
+      ]
+    },
+    {
+      "chat_id": "CHAT-006",
+      "order_id": "ORD-009",
+      "messages": [
+        {
+          "sender": "customer",
+          "text": "Mình đổi ý rồi, hủy đơn giúp mình.",
+          "time": "12:42"
+        },
+        {
+          "sender": "bot",
+          "text": "Đơn ORD-009 đang ở bước «Đã đặt hàng» — bạn xác nhận hủy và hoàn tiền nhé?",
+          "time": "12:42"
+        }
+      ]
+    },
+    {
+      "chat_id": "CHAT-007",
+      "order_id": "ORD-012",
+      "messages": [
+        {
+          "sender": "customer",
+          "text": "Quán xác nhận rồi sao vẫn chưa có tài xế?",
+          "time": "12:00"
+        },
+        {
+          "sender": "bot",
+          "text": "Đơn đã xác nhận, hệ thống đang ưu tiên tìm tài xế. Bạn có thể chờ thêm hoặc gặp nhân viên.",
+          "time": "12:01"
+        }
+      ]
+    },
+    {
+      "chat_id": "CHAT-008",
+      "order_id": "ORD-021",
+      "messages": [
+        {
+          "sender": "customer",
+          "text": "Đơn lớn quá, mình cần đổi giờ giao — gặp nhân viên được không?",
+          "time": "19:18"
+        },
+        {
+          "sender": "bot",
+          "text": "Mình chuyển bạn sang nhân viên để hỗ trợ điều chỉnh đơn.",
+          "time": "19:19"
+        },
+        {
+          "sender": "admin",
+          "text": "Chào bạn, mình sẽ liên hệ quán xác nhận lại khung giờ giao.",
+          "time": "19:22"
+        }
+      ]
+    },
+    {
+      "chat_id": "CHAT-009",
+      "order_id": "ORD-007",
+      "messages": [
+        {
+          "sender": "customer",
+          "text": "Quán sắp đóng cửa rồi, đơn có giao kịp không?",
+          "time": "22:35"
+        },
+        {
+          "sender": "bot",
+          "text": "Quán sắp đóng cửa — mình đang kiểm tra với quán và tìm phương án hủy/hoàn nếu không giao kịp.",
+          "time": "22:36"
+        }
+      ]
+    },
+    {
+      "chat_id": "CHAT-010",
+      "order_id": "ORD-022",
+      "messages": [
+        {
+          "sender": "customer",
+          "text": "Món lấy lâu quá, tài xế đang ở đâu?",
+          "time": "12:50"
+        },
+        {
+          "sender": "bot",
+          "text": "Tài xế đang trên đường giao — đồ ăn đã chờ lâu hơn dự kiến, mình theo dõi sát ETA.",
+          "time": "12:51"
+        }
+      ]
+    }
+  ]
+}

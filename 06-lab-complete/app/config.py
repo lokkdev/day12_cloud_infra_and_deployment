@@ -16,9 +16,18 @@ class Settings:
     app_name: str = field(default_factory=lambda: os.getenv("APP_NAME", "Production AI Agent"))
     app_version: str = field(default_factory=lambda: os.getenv("APP_VERSION", "1.0.0"))
 
-    # LLM
+    # LLM — BaSau agent uses Gemini (Day06 Hackathon); mock fallback if unset
     openai_api_key: str = field(default_factory=lambda: os.getenv("OPENAI_API_KEY", ""))
     llm_model: str = field(default_factory=lambda: os.getenv("LLM_MODEL", "gpt-4o-mini"))
+    gemini_api_key: str = field(default_factory=lambda: os.getenv("GEMINI_API_KEY", ""))
+    gemini_model: str = field(default_factory=lambda: os.getenv("GEMINI_MODEL", "gemini-2.0-flash"))
+    gemini_temperature: float = field(
+        default_factory=lambda: float(os.getenv("GEMINI_TEMPERATURE", "0.3"))
+    )
+    gemini_max_output_tokens: int = field(
+        default_factory=lambda: int(os.getenv("GEMINI_MAX_OUTPUT_TOKENS", "512"))
+    )
+    data_json_path: str = field(default_factory=lambda: os.getenv("DATA_JSON_PATH", ""))
 
     # Security
     agent_api_key: str = field(default_factory=lambda: os.getenv("AGENT_API_KEY", "dev-key-change-me"))
@@ -47,8 +56,8 @@ class Settings:
                 raise ValueError("AGENT_API_KEY must be set in production!")
             if self.jwt_secret == "dev-jwt-secret":
                 raise ValueError("JWT_SECRET must be set in production!")
-        if not self.openai_api_key:
-            logger.warning("OPENAI_API_KEY not set — using mock LLM")
+        if not self.gemini_api_key and not self.openai_api_key:
+            logger.warning("GEMINI_API_KEY not set — using mock LLM")
         return self
 
 

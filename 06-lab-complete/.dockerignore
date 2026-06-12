@@ -7,5 +7,6 @@ venv/
 .venv/
 .git/
 *.md
+!ai-model/**/*.md
 tests/
 .DS_Store
