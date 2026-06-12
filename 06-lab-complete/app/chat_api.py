@@ -1,25 +1,25 @@
 """Day06-compatible chat API — bridges the web UI to the Python BaSau agent."""
+
 from __future__ import annotations
 
 import logging
 import time
 import uuid
 
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, Field
-
-from app.basau.agent import ask as agent_ask, is_ai_enabled, reset_session
+from app.basau.agent import ask as agent_ask
+from app.basau.agent import is_ai_enabled, reset_session
 from app.basau.domain import get_cancel_journey_phase, get_customer_view_type
 from app.basau.tools import SessionState, cancel_order, lookup_order
 from app.chat_store import (
     append_message,
-    end_human_session,
     escalate_order,
     get_messages_since,
     get_order_chat,
     reset_order_chat,
 )
 from app.config import settings
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
 
@@ -131,7 +131,7 @@ def chat_init(body: InitChatRequest):
             "responseMs": int((time.time() - started) * 1000),
             "apiError": False,
         }
-    except Exception as exc:
+    except Exception:
         logger.exception("chat_init_error")
         return {
             "aiEnabled": True,
@@ -179,7 +179,7 @@ def chat_message(body: MessageRequest):
             "apiError": False,
             "order": fresh,
         }
-    except Exception as exc:
+    except Exception:
         logger.exception("chat_message_error")
         return {
             "text": "Xin lỗi, mình chưa xử lý được yêu cầu. Bạn thử hỏi lại hoặc gặp nhân viên nhé.",
@@ -223,7 +223,7 @@ def chat_escalate(body: EscalateRequest):
         summary=body.summary or "Khách yêu cầu gặp nhân viên",
         priority=body.priority,
     )
-    for sid, meta in list(_ui_sessions.items()):
+    for _sid, meta in list(_ui_sessions.items()):
         if meta.get("orderId") == body.orderId:
             meta["escalated"] = True
     return {

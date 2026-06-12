@@ -1,9 +1,9 @@
 """In-memory chat store for Day06 UI compatibility (sync, escalate, poll)."""
+
 from __future__ import annotations
 
 import time
 from typing import Any
-
 
 _order_chats: dict[str, dict[str, Any]] = {}
 
