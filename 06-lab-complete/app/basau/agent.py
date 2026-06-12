@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 _sessions: dict[str, dict] = {}
 _system_prompt: str | None = None
+_genai_client = None
 
 
 @dataclass
@@ -44,11 +45,25 @@ def _extract_order_id(question: str, order_id: str | None) -> str | None:
     return match.group(0).upper() if match else None
 
 
-def _create_chat():
+def _get_genai_client():
+    """Singleton client — tránh httpx client bị đóng giữa các request."""
+    global _genai_client
     from google import genai
+
+    if _genai_client is None:
+        _genai_client = genai.Client(api_key=settings.gemini_api_key)
+    return _genai_client
+
+
+def _reset_genai_client() -> None:
+    global _genai_client
+    _genai_client = None
+
+
+def _create_chat():
     from google.genai import types
 
-    client = genai.Client(api_key=settings.gemini_api_key)
+    client = _get_genai_client()
     tool = types.Tool(function_declarations=get_tool_declarations())
     config = types.GenerateContentConfig(
         system_instruction=_get_system_prompt(),
@@ -57,8 +72,7 @@ def _create_chat():
         tools=[tool],
         automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
     )
-    chat = client.chats.create(model=settings.gemini_model, config=config)
-    return chat
+    return client.chats.create(model=settings.gemini_model, config=config)
 
 
 def _run_tool_loop(chat, message: str, session: SessionState) -> str:
@@ -146,8 +160,22 @@ def ask(
         answer = _run_tool_loop(chat, message, session_state)
         _sessions[sid]["initialized"] = True
     except Exception as exc:
-        logger.exception("agent_error")
-        raise RuntimeError(f"Agent error: {exc}") from exc
+        err = str(exc).lower()
+        if "client has been closed" in err or "client is closed" in err:
+            logger.warning("gemini_client_closed — recreating session")
+            _reset_genai_client()
+            _sessions.pop(sid, None)
+            chat = _create_chat()
+            _sessions[sid] = {
+                "chat": chat,
+                "state": session_state,
+                "initialized": False,
+            }
+            answer = _run_tool_loop(chat, message, session_state)
+            _sessions[sid]["initialized"] = True
+        else:
+            logger.exception("agent_error")
+            raise RuntimeError(f"Agent error: {exc}") from exc
 
     return AgentReply(
         answer=answer,
