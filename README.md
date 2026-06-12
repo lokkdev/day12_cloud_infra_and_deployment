@@ -31,11 +31,28 @@ day12_ha-tang-cloud_va_deployment/
 │   ├── develop/                      #   Health check + graceful shutdown
 │   └── production/                   #   Stateless + Redis + Nginx LB
 │
-├── 06-lab-complete/                # Lab 12: Production-ready agent
-│   └── (full project kết hợp tất cả)
+├── 06-lab-complete/                # Lab 12: BaSau agent + UI + CI/CD ⭐ FINAL
+│   ├── app/                        #   FastAPI + Gemini agent
+│   ├── web/                        #   Day06 customer UI
+│   └── scripts/deploy-remote.sh    #   VPS deploy
 │
 └── utils/                          # Mock LLM dùng chung (không cần API key)
 ```
+
+---
+
+## 📦 Nộp Bài (Submission)
+
+| File | Mục đích |
+|------|----------|
+| **[MISSION_ANSWERS.md](MISSION_ANSWERS.md)** | Trả lời exercises Parts 1–6 |
+| **[DEPLOYMENT.md](DEPLOYMENT.md)** | Public URL, test commands, env vars |
+| **[DAY12_DELIVERY_CHECKLIST.md](DAY12_DELIVERY_CHECKLIST.md)** | Checklist trước khi nộp |
+| **[06-lab-complete/README.md](06-lab-complete/README.md)** | Hướng dẫn final project |
+
+**Live demo (Lab 06):** http://202.92.7.140:8000/?order=ORD-001
+
+**Repo GitHub:** https://github.com/lokkdev/day12_cloud_infra_and_deployment
 
 ---
 
@@ -79,7 +96,7 @@ Mỗi folder có `requirements.txt` riêng. Không cần API key thật — các
 | 3 | `03-cloud-deployment` | Railway, Render, Cloud Run |
 | 4 | `04-api-gateway` | Auth, rate limiting, cost protection |
 | 5 | `05-scaling-reliability` | Health check, stateless, rolling deploy |
-| 6 | `06-lab-complete` | **Full production agent** |
+| 6 | `06-lab-complete` | **BaSau agent + UI + VPS + CI/CD** |
 
 ---
 

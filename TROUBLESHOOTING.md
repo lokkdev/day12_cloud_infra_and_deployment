@@ -213,6 +213,74 @@ docker ps -a  # Container có status "Exited (1)"
 
 ---
 
+### Issue: `KeyError: 'ContainerConfig'` (docker-compose v1 on VPS)
+
+**Symptoms:**
+```
+ERROR: for agent  'ContainerConfig'
+KeyError: 'ContainerConfig'
+```
+
+**Cause:** docker-compose **v1.29** không tương thích với Docker Engine mới khi **recreate** container cũ.
+
+**Fix:**
+```bash
+cd /opt/basau-agent/06-lab-complete
+docker-compose down --remove-orphans
+docker ps -aq --filter "name=06-lab-complete" | xargs -r docker rm -f
+docker-compose up -d --build --force-recreate
+```
+
+**Prevention:** Script `scripts/deploy-remote.sh` tự xóa container cũ trước khi `up`.
+
+**Long-term fix:** Cài Docker Compose v2 plugin:
+```bash
+apt install docker-compose-plugin
+docker compose version   # v2.x
+```
+
+---
+
+### Issue: GitHub CD — `ssh: handshake failed: connection reset by peer`
+
+**Symptoms:** CD workflow fails at `appleboy/ssh-action` before any deploy commands run.
+
+**Causes:**
+- Firewall VPS chỉ cho phép IP máy bạn, chặn IP GitHub Actions
+- Sai `VPS_PORT` secret (phải là `24700` nếu SSH custom port)
+- SSH key trong `VPS_SSH_KEY` không khớp `authorized_keys`
+- fail2ban đã ban IP GitHub
+
+**Fix:**
+```bash
+# On VPS — mở SSH port
+ufw allow 24700/tcp
+
+# Kiểm tra SSH listen
+ss -tlnp | grep 24700
+
+# Deploy thủ công nếu CD vẫn fail
+cd /opt/basau-agent/06-lab-complete && git pull && docker-compose up -d --build
+```
+
+---
+
+### Issue: Browser shows JSON instead of UI at `/`
+
+**Cause:** VPS đang chạy **image/code cũ** (trước khi tích hợp `web/`).
+
+**Fix:**
+```bash
+cd /opt/basau-agent/06-lab-complete
+git pull origin main
+docker-compose down
+docker-compose up -d --build --force-recreate
+```
+
+**Expected:** `GET /` trả HTML (BaSau UI), `GET /api` trả JSON metadata.
+
+---
+
 ### Issue: "Cannot connect to service from another service"
 
 **Symptoms:**

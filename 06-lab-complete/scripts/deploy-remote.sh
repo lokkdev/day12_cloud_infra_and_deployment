@@ -45,11 +45,14 @@ fi
 
 cd "$APP_DIR"
 echo "Stopping old containers..."
-$COMPOSE down --remove-orphans || true
+# docker-compose v1.29 + Docker Engine mới → KeyError 'ContainerConfig' khi recreate.
+# Phải xóa hết container cũ trước khi up (không dựa vào recreate in-place).
+$COMPOSE down --remove-orphans 2>/dev/null || true
+docker ps -aq --filter "name=06-lab-complete" | xargs -r docker rm -f 2>/dev/null || true
 docker rm -f 06-lab-complete_agent_1 06-lab-complete_redis_1 2>/dev/null || true
 
 echo "Building and starting..."
-$COMPOSE up -d --build --remove-orphans
+$COMPOSE up -d --build --remove-orphans --force-recreate
 $COMPOSE ps
 
 echo "Waiting for health check..."

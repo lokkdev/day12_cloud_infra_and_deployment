@@ -171,17 +171,23 @@ Read [CODE_LAB.md](CODE_LAB.md) for detailed explanations and exercises.
 **Time:** 3-4 hours  
 **Outcome:** Deep understanding + production-ready skills
 
-### Option B: Jump to Final Project
-
-Go straight to Part 6 and build from scratch.
+### Option B: Jump to Final Project (Recommended if done Parts 1–5)
 
 ```bash
 cd 06-lab-complete
-cat README.md
+cp .env.example .env.local
+# Edit .env.local — GEMINI_API_KEY, AGENT_API_KEY, JWT_SECRET
+docker compose up -d --build
 ```
 
-**Time:** 1-2 hours  
-**Outcome:** Working production agent
+**Open UI:** http://localhost:8000/?order=ORD-001
+
+**Live VPS:** http://202.92.7.140:8000/?order=ORD-001
+
+See [06-lab-complete/README.md](06-lab-complete/README.md) and [DEPLOYMENT.md](DEPLOYMENT.md).
+
+**Time:** 30 minutes  
+**Outcome:** BaSau agent + chat UI + Docker stack
 
 ### Option C: Explore Examples
 

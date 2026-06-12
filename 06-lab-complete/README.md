@@ -1,100 +1,154 @@
-# Lab 12 — Complete Production Agent
+# Lab 12 — BaSau Production Agent (Final Project)
 
-Kết hợp TẤT CẢ những gì đã học trong 1 project hoàn chỉnh.
+Production-ready AI agent kết hợp **tất cả Day 12 concepts** + **Day06 Hackathon** (Gemini agent, tools, customer UI).
 
-## Checklist Deliverable
-
-- [x] Dockerfile (multi-stage, < 500 MB)
-- [x] docker-compose.yml (agent + redis)
-- [x] .dockerignore
-- [x] Health check endpoint (`GET /health`)
-- [x] Readiness endpoint (`GET /ready`)
-- [x] API Key authentication
-- [x] Rate limiting
-- [x] Cost guard
-- [x] Config từ environment variables
-- [x] Structured logging
-- [x] Graceful shutdown
-- [x] Public URL ready (Railway / Render config)
+**Live demo:** http://202.92.7.140:8000/?order=ORD-001
 
 ---
 
-## Cấu Trúc
+## Deliverable Checklist
+
+- [x] Multi-stage Dockerfile (< 500 MB)
+- [x] docker-compose.yml (agent + Redis)
+- [x] Health (`GET /health`) + Readiness (`GET /ready`)
+- [x] API Key authentication (`POST /ask`)
+- [x] Rate limiting (in-memory, per API key)
+- [x] Cost guard (daily budget USD)
+- [x] 12-factor config (`.env.local`)
+- [x] Structured JSON logging
+- [x] Graceful shutdown (SIGTERM)
+- [x] BaSau Gemini agent + 8 tools (Day06)
+- [x] Customer web UI (Day06 hackathon)
+- [x] CI/CD (GitHub Actions → VPS)
+- [x] pytest + ruff
+
+---
+
+## Project Structure
 
 ```
 06-lab-complete/
 ├── app/
-│   ├── main.py         # Entry point — kết hợp tất cả
-│   ├── config.py       # 12-factor config
-│   ├── auth.py         # API Key + JWT
-│   ├── rate_limiter.py # Rate limiting
-│   └── cost_guard.py   # Budget protection
-├── Dockerfile          # Multi-stage, production-ready
-├── docker-compose.yml  # Full stack
-├── railway.toml        # Deploy Railway
-├── render.yaml         # Deploy Render
-├── .env.example        # Template
-├── .dockerignore
-└── requirements.txt
+│   ├── main.py           # FastAPI entry — API + static UI
+│   ├── config.py         # 12-factor settings
+│   ├── chat_api.py       # /api/chat/* for web UI
+│   ├── chat_store.py     # In-memory chat sync/escalate
+│   └── basau/
+│       ├── agent.py      # Gemini + tool-calling loop
+│       ├── tools.py      # 8 agent tools
+│       ├── domain.py     # Order status, cancel flow
+│       └── data_store.py
+├── web/                  # Day06 customer UI (HTML/CSS/JS)
+├── ai-model/             # SYSTEM_PROMPT, rules, tools docs
+├── data/data.json        # Demo orders
+├── utils/mock_llm.py     # Fallback when no GEMINI_API_KEY
+├── scripts/deploy-remote.sh
+├── tests/                # pytest (13 tests)
+├── Dockerfile
+├── docker-compose.yml
+├── .env.example
+├── railway.toml
+└── render.yaml
 ```
 
 ---
 
-## Chạy Local
+## Quick Start (Local)
 
 ```bash
-# 1. Setup
-cp .env.example .env
+cd 06-lab-complete
 
-# 2. Chạy với Docker Compose
-docker compose up
+# 1. Environment
+cp .env.example .env.local
+# Edit .env.local — set GEMINI_API_KEY, AGENT_API_KEY, JWT_SECRET
 
-# 3. Test
-curl http://localhost/health
+# 2. Run with Docker
+docker compose up -d --build
 
-# 4. Lấy API key từ .env, test endpoint
-API_KEY=$(grep AGENT_API_KEY .env | cut -d= -f2)
-curl -H "X-API-Key: $API_KEY" \
-     -X POST http://localhost/ask \
-     -H "Content-Type: application/json" \
-     -d '{"question": "What is deployment?"}'
+# 3. Open UI
+open http://localhost:8000/?order=ORD-001
+
+# 4. Test API
+API_KEY=$(grep AGENT_API_KEY .env.local | cut -d= -f2)
+curl http://localhost:8000/health
+curl -X POST http://localhost:8000/ask \
+  -H "X-API-Key: $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"question": "Đơn ORD-001 sao rồi?", "order_id": "ORD-001"}'
 ```
 
 ---
 
-## Deploy Railway (< 5 phút)
+## Endpoints
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| `GET` | `/` | — | Customer UI (order + chat) |
+| `GET` | `/policies` | — | Policies page |
+| `GET` | `/api` | — | API metadata (JSON) |
+| `GET` | `/health` | — | Liveness probe |
+| `GET` | `/ready` | — | Readiness probe |
+| `POST` | `/ask` | `X-API-Key` | Agent API |
+| `GET` | `/api/chat/status` | — | UI: AI enabled? |
+| `POST` | `/api/chat/init` | — | UI: start chat session |
+| `POST` | `/api/chat/message` | — | UI: send message |
+| `GET` | `/metrics` | `X-API-Key` | Usage metrics |
+
+---
+
+## Development
 
 ```bash
-# Cài Railway CLI
-npm i -g @railway/cli
-
-# Login và deploy
-railway login
-railway init
-railway variables set OPENAI_API_KEY=sk-...
-railway variables set AGENT_API_KEY=your-secret-key
-railway up
-
-# Nhận public URL!
-railway domain
+pip install -r requirements-dev.txt
+ruff check app tests
+ruff format app tests
+pytest tests -v
+python check_production_ready.py
 ```
 
 ---
 
-## Deploy Render
+## VPS Deploy
 
-1. Push repo lên GitHub
-2. Render Dashboard → New → Blueprint
-3. Connect repo → Render đọc `render.yaml`
-4. Set secrets: `OPENAI_API_KEY`, `AGENT_API_KEY`
-5. Deploy → Nhận URL!
+See root [DEPLOYMENT.md](../DEPLOYMENT.md) for full details.
+
+```bash
+ssh -p 24700 root@YOUR_VPS_IP
+cd /opt/basau-agent/06-lab-complete
+cp .env.example .env.local && nano .env.local
+docker-compose down --remove-orphans
+docker-compose up -d --build --force-recreate
+```
+
+**docker-compose v1 note:** If you see `KeyError: 'ContainerConfig'`, run `docker-compose down` and remove old containers before `up`. See [TROUBLESHOOTING.md](../TROUBLESHOOTING.md).
 
 ---
 
-## Kiểm Tra Production Readiness
+## CI/CD
+
+- **CI** (`.github/workflows/ci.yml`): ruff + pytest on every push to `06-lab-complete/**`
+- **CD** (`.github/workflows/cd.yml`): SSH deploy to VPS after CI passes
+
+GitHub Secrets: `VPS_HOST`, `VPS_PORT`, `VPS_USER`, `VPS_SSH_KEY`, `VPS_REPO_DIR`
+
+---
+
+## Railway / Render (alternative)
+
+```bash
+# Railway
+cd 06-lab-complete
+railway login && railway init && railway up
+
+# Render — connect repo, uses render.yaml
+```
+
+Set `GEMINI_API_KEY`, `AGENT_API_KEY`, `JWT_SECRET` in platform dashboard.
+
+---
+
+## Production Readiness
 
 ```bash
 python check_production_ready.py
 ```
-
-Script này kiểm tra tất cả items trong checklist và báo cáo những gì còn thiếu.
