@@ -37,6 +37,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 WEB_ROOT = Path(__file__).resolve().parent.parent / "web"
+DATA_ROOT = Path(__file__).resolve().parent.parent / "data"
 
 # ─────────────────────────────────────────────────────────
 # Logging — JSON structured
@@ -235,7 +236,9 @@ def policies_page():
 if WEB_ROOT.is_dir():
     app.mount("/public", StaticFiles(directory=WEB_ROOT / "public"), name="public")
     app.mount("/src", StaticFiles(directory=WEB_ROOT / "src"), name="src")
-    app.mount("/data", StaticFiles(directory=WEB_ROOT / "data"), name="data")
+
+if DATA_ROOT.is_dir():
+    app.mount("/data", StaticFiles(directory=DATA_ROOT), name="data")
 
 
 @app.post("/ask", response_model=AskResponse, tags=["Agent"])
